@@ -1,0 +1,64 @@
+---
+# The inventory defines which hosts belong to which groups and what variables are applied to them. The playbooks
+# themselves in our scheme do not define any variables. The names you see on the far left here correspond to the limit
+# function you can run with the ansible-playbook command. For example ansible-playbook site.yml --limit sensor would
+# look at this inventory file and see the hosts that are part of the sensor group. When site.yml imports the sensors.yml
+# file, sensor.yml will only apply itself to the servers listed in the sensors group in this inventory file.
+
+all:
+  vars:
+
+    # A DHCP server is required to pxe / kickstart the nodes.
+    # The following variables configure a dhcp server on the ansible controller.
+    # dhcp: a dhcp server is required to properly pxe machines.  By default the ansible controller will act as the dhcp server.
+    # If this is set to false then the proper options such must be configured on the external dhcp server.
+    # Default: true
+    dhcp: true
+    # dhcp_start: This is the DHCP range starting ip address. This will be used
+    # on the hosts while they are being kickstarted
+    # Default: null
+    dhcp_start: # '<STARTING IP ADDRESS EX: 192.168.1.100>'
+    # dhcp_end: This is the DHCP range ending ip address.
+    # Default: null
+    dhcp_end: # '<ENDING IP ADDRESS EX: 192.168.1.200>'
+    # dhcp_mask: Subnet mask used for dhcp configuration.
+    # Default: The same subnet as the ansible controller.
+
+    # gateway: This will be the default gateway set on ESXi.
+    # Default: null
+    gateway: # '<IP ADDRESS OF GATEWAY>'
+    # netmask: The subnet mask to be used for your ESXi hosts
+    # Default: null
+    netmask: # '<SUBNET MASK>'
+    domain: # '<YOUR DNS SEARCH DOMAIN>'
+
+    # The following variables are used for kickstart options.
+    # root_password: Sets root password for each node.
+    # Define: empty
+    root_password: # "<YOUR ROOT PASSWORD>"
+    # timezone: Set the timezone for each node.
+    # Define: America/Chicago
+    timezone: 'UTC'
+
+    # default_boot_drive: This is the default drive used for operating system installation.
+    # Default: sda
+    default_boot_drive: sda
+    # default_data_drive: This is the default drive used for data.
+    # Default: sdb
+    default_data_drive: sdb
+
+    # server_ip: ansible controller ip address used to define kickstart server
+    # Default: ansible controller ip address
+    server_ip: # '<IP ADDRESS OF THIS HOST>'
+
+  children:
+    nodes:
+      children:
+        servers:
+          hosts:
+            vmhost.lan:
+              ip: "192.168.1.90"
+              mac: "00:50:56:a6:39:bc"
+              boot_drive: sda # TODO: Figure this out
+              data_drive: sdb # TODO: Figure this out
+              pxe_type: "bios"
