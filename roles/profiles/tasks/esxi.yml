@@ -1,7 +1,7 @@
 ---
 - name: "{{ ansible_distribution }} block"
   block:
-    - name: Make default bios {{ ansible_distribution }} {{ kick_cfg }} avail
+    - name: Make default bios {{ kick_cfg }} available
       template:
         src: ks.cfg.j2
         dest: "{{ ks_template_dir }}/ks.cfg"
